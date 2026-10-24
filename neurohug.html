@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEUROHUG - Agenda e Cuidado Integrado</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2A6F97;        /* Azul Profundo e Confiável */
+            --primary-dark: #1D4E6B;   /* Azul Hover */
+            --secondary: #E0F1F5;      /* Azul Suave / Destaque */
+            --background: #F4F1DE;     /* Bege Areia / Neutro Quente (Fundo acolhedor) */
+            --surface: #FFFFFF;        /* Branco Puro para Cards */
+            --surface-alt: #FCFBF7;    /* Bege Gelo leve para detalhes */
+            --text-main: #3D405B;      /* Cinza Aveludado para Leitura */
+            --text-muted: #6C757D;     /* Cinza Suave */
+            --accent-green: #2A9D8F;   /* Verde Suave (Sucesso/Apoio) */
+            --accent-yellow: #E9C46A;  /* Amarelo Post-it / Destaque Criativo */
+            --border-color: #E2DBD0;   /* Linhas e bordas suaves */
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow-subtle: 0 4px 20px rgba(42, 111, 151, 0.06);
+            --shadow-hover: 0 8px 30px rgba(42, 111, 151, 0.12);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Topbar / Header */
+        header {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-subtle);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #2A6F97, #2A9D8F);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 10px rgba(42,111,151,0.2);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--secondary);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            color: #D90429;
+        }
+
+        /* Layout Principal */
+        .main-container {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+        }
+
+        @media(max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Navegação por Abas (Sidebar) */
+        .sidebar {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-subtle);
+            height: fit-content;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .tab-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .tab-btn i {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            background-color: var(--secondary);
+            color: var(--primary);
+        }
+
+        .tab-btn:hover i {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(42, 111, 151, 0.2);
+        }
+
+        .tab-btn.active i {
+            color: white;
+        }
+
+        /* Conteúdo Dinâmico */
+        .content-area {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid var(--border-color);
+            min-height: 600px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cabeçalho da Seção */
+        .section-header {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            color: var(--primary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-size: 0.95rem;
+        }
+
+        /* Formulários e Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: var(--surface-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .info-card h3 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card p, .info-card ul {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .info-card ul {
+            padding-left: 1.2rem;
+        }
+
+        /* Formulário de Alimento / Perfil */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            background: var(--surface-alt);
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(42, 111, 151, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(42,111,151,0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* --- Caderno de Anotações Criativo (Estilo Post-it / Blocos) --- */
+        .notes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .note-card {
+            background: var(--accent-yellow);
+            color: #333;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: 2px 4px 15px rgba(0,0,0,0.06);
+            position: relative;
+            transform: rotate(-1deg);
+            transition: var(--transition);
+            border-top: 25px solid rgba(0,0,0,0.05);
+        }
+
+        .note-card:nth-child(even) {
+            background: #E0F1F5; /* Azul Suave Alternativo */
+            transform: rotate(1deg);
+            border-top-color: rgba(42,111,151,0.1);
+        }
+
+        .note-card:nth-child(3n) {
+            background: #EAF4EC; /* Verde Pastel Alternativo */
+            transform: rotate(0deg);
+        }
+
+        .note-card:hover {
+            transform: scale(1.02) rotate(0deg);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .note-date {
+            font-size: 0.75rem;
+            color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .note-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #2D3142;
+            word-break: break-word;
+        }
+
+        .note-author {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: right;
+            color: #555;
+        }
+
+        /* --- Contatos Úteis --- */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .contact-card {
+            background: var(--surface-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
+        }
+
+        .contact-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--secondary);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .contact-info h4 {
+            font-size: 1.05rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .contact-info p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .contact-phone {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--surface);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Topbar -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">
+                <i class="fa-solid fa-puzzle-piece"></i>
+            </div>
+            <div class="logo-text">NEUROHUG</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="user-profile-badge">
+                <i class="fa-solid fa-child-reaching"></i>
+                <span>Arthur (4 anos)</span>
+            </div>
+            <button class="btn-logout" title="Sair da Conta" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </button>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar de Navegação -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Menu de Navegação</div>
+            <nav class="tab-menu">
+                <button class="tab-btn active" onclick="switchTab(event, 'perfil')">
+                    <i class="fa-solid fa-id-card"></i> Perfil e Preferências
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'diario')">
+                    <i class="fa-solid fa-book-open"></i> Diário de Bordo
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'escola')">
+                    <i class="fa-solid fa-school"></i> Atividades Escolares
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'anotacoes')">
+                    <i class="fa-solid fa-note-sticky"></i> Caderno Criativo
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'contatos')">
+                    <i class="fa-solid fa-address-book"></i> Contatos Úteis
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Área de Conteúdo -->
+        <main class="content-area">
+
+            <!-- ABA 1: PERFIL -->
+            <section id="perfil" class="tab-content active">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-id-card"></i> Perfil Sensorial e Necessidades</h2>
+                    <p>Informações vitais inseridas pela mãe para adaptação da ADI e da escola.</p>
+                </div>
+
+                <div class="card-grid">
+                    <div class="info-card">
+                        <h3><i class="fa-solid fa-triangle-exclamation" style="color: #D90429;"></i> Gatilhos de Crise</h3>
+                        <p>Sons altos repentinos (liquidificador, aspirador de pó), ambientes lotados e com luzes fluorescentes muito fortes.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fa-solid fa-shield-heart" style="color: var(--accent-green);"></i> Como Resolver Crises</h3>
+                        <p>Levar para um local silencioso e com penumbra. Usar o fone abafador de ruídos, oferecer o brinquedo mordedor texturizado e falar com tom de voz calmo e pausado.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fa-solid fa-utensils" style="color: var(--primary);"></i> Restrições Alimentares</h3>
+                        <p>Intolerância leve à lactose. Prefere texturas macias; recusa alimentos misturados (ex: purê misturado com arroz).</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fa-solid fa-face-smile" style="color: var(--accent-yellow);"></i> Texturas e Brinquedos Favoritos</h3>
+                        <p>Gosta de superfícies macias e pelúcias. Brinquedos preferidos: Blocos de encaixe numerados e fidget toys circulares.</p>
+                    </div>
+                </div>
+
+                <div style="background: var(--surface-alt); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-pen-to-square"></i> Atualizar Informações do Perfil</h3>
+                    <form onsubmit="updateProfile(event)">
+                        <div class="form-group">
+                            <label>Novos Gatilhos ou Observações Sensoriais:</label>
+                            <textarea class="form-control" placeholder="Descreva novos comportamentos ou sensibilidades..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar Alterações</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ABA 2: DIÁRIO -->
+            <section id="diario" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-book-open"></i> Diário de Bordo e Consultas</h2>
+                    <p>Registro diário de rotinas, acompanhamento de terapias e evolução da criança.</p>
+                </div>
+
+                <div style="background: var(--surface-alt); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-calendar-plus"></i> Adicionar Registro do Dia</h3>
+                    <form onsubmit="addDiaryEntry(event)">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Data:</label>
+                                <input type="date" class="form-control" required id="diaryDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria / Consulta:</label>
+                                <select class="form-control" id="diaryCategory">
+                                    <option>Rotina Diária / Emocional</option>
+                                    <option>Consulta Terapia Ocupacional</option>
+                                    <option>Consulta Fonoaudiologia</option>
+                                    <option>Pediatra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Relato do Dia / Evolução / Ocorrências:</label>
+                            <textarea class="form-control" id="diaryText" placeholder="Como foi o dia? Houve alguma crise? Como foi o atendimento escolar?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-plus"></i> Publicar no Diário</button>
+                    </form>
+                </div>
+
+                <div id="diaryList">
+                    <!-- Registros inseridos via JS aparecerão aqui -->
+                    <div class="info-card" style="margin-bottom: 1rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">24/10/2026 - Terapia Ocupacional</span>
+                        <h4 style="color: var(--primary); margin: 4px 0;">Sessão focada em regulação sensorial</h4>
+                        <p>Arthur respondeu muito bem ao balanço terapêutico. Aceitou texturas novas de massinha sem relutância.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABA 3: ESCOLA -->
+            <section id="escola" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-school"></i> Atividades Escolares e Sugestões</h2>
+                    <p>Canal direto entre o professor e a família para atividades práticas e adaptações pedagógicas.</p>
+                </div>
+
+                <div class="card-grid">
+                    <div class="info-card" style="border-left: 4px solid var(--accent-green);">
+                        <h3><i class="fa-solid fa-shapes"></i> Atividade de Classe Praticada</h3>
+                        <p><strong>Conteúdo:</strong> Classificação de cores primárias com blocos geométricos de madeira.</p>
+                        <p style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">Registrado pela Profª. Carla em 23/10</p>
+                    </div>
+                    <div class="info-card" style="border-left: 4px solid var(--primary);">
+                        <h3><i class="fa-solid fa-house-chimney"></i> Sugestão para Praticar em Casa</h3>
+                        <p><strong>Dica da Professora:</strong> Estimular o agrupamento de tampas coloridas de garrafa pet na hora do banho para fixar a associação visual.</p>
+                    </div>
+                </div>
+
+                <div style="background: var(--surface-alt); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-pen-nib"></i> Professor / ADI: Adicionar Sugestão ou Atividade</h3>
+                    <form onsubmit="addSchoolActivity(event)">
+                        <div class="form-group">
+                            <label>Tipo de Publicação:</label>
+                            <select class="form-control">
+                                <option>Atividade Praticada em Sala</option>
+                                <option>Sugestão de Atividade para Casa</option>
+                                <option>Relatório de Evolução Pedagógica</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição detalhada:</label>
+                            <textarea class="form-control" placeholder="Descreva a atividade ou sugestão para a família acompanhar..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Enviar para a Família</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ABA 4: CADERNO CRIATIVO -->
+            <section id="anotacoes" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-note-sticky"></i> Caderno de Anotações Criativo</h2>
+                    <p>Bloco de notas estilo post-it interativo para anotações rápidas, insights e recados importantes.</p>
+                </div>
+
+                <div style="background: var(--surface-alt); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-circle-plus"></i> Nova Nota Rápida</h3>
+                    <form onsubmit="addCreativeNote(event)">
+                        <div class="form-group">
+                            <label>Escreva sua anotação ou lembrete:</label>
+                            <textarea class="form-control" id="noteInput" placeholder="Ex: Lembrar de levar o fone abafador na terça-feira..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-thumbtack"></i> Fixar no Caderno</button>
+                    </form>
+                </div>
+
+                <div class="notes-container" id="notesGrid">
+                    <!-- Notas Criativas em Estilo Post-it -->
+                    <div class="note-card">
+                        <span class="note-date">23 Out 2026</span>
+                        <div class="note-text">Comprar mais unidades do mordedor texturizado azul que ele tanto gosta para deixar na mochila da escola.</div>
+                        <div class="note-author">- Mamãe</div>
+                    </div>
+                    <div class="note-card">
+                        <span class="note-date">22 Out 2026</span>
+                        <div class="note-text">Reunião pedagógica agendada para sexta-feira às 14h na secretaria da escola.</div>
+                        <div class="note-author">- Profª Carla</div>
+                    </div>
+                    <div class="note-card">
+                        <span class="note-date">20 Out 2026</span>
+                        <div class="note-text">Excelente dia! Arthur interagiu espontaneamente com o colega durante a hora do lanche.</div>
+                        <div class="note-author">- ADI Juliana</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABA 5: CONTATOS ÚTEIS -->
+            <section id="contatos" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-address-book"></i> Contatos Úteis e Terapeutas</h2>
+                    <p>Lista rápida de profissionais de saúde, escola e rede de apoio do Arthur.</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                        <div class="contact-info">
+                            <h4>Dra. Beatriz Mendes</h4>
+                            <p>Terapeuta Ocupacional (Integração Sensorial)</p>
+                            <span class="contact-phone"><i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> (81) 98877-6655</span>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fa-solid fa-school-flag"></i></div>
+                        <div class="contact-info">
+                            <h4>Escola Aprender Crescer</h4>
+                            <p>Coordenação Inclusiva & Secretaria</p>
+                            <span class="contact-phone"><i class="fa-solid fa-phone" style="color: var(--primary);"></i> (81) 3222-1122</span>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fa-solid fa-hands-holding-child"></i></div>
+                        <div class="contact-info">
+                            <h4>Juliana Souza (ADI)</h4>
+                            <p>Acompanhante Especializada Diária</p>
+                            <span class="contact-phone"><i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> (81) 99111-2233</span>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fa-solid fa-stethoscope"></i></div>
+                        <div class="contact-info">
+                            <h4>Dr. Ricardo Silveira</h4>
+                            <p>Neuropediatra Pediátrico</p>
+                            <span class="contact-phone"><i class="fa-solid fa-phone" style="color: var(--primary);"></i> (81) 3444-5566</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 NEUROHUG &bull; Plataforma Integrada de Cuidado Infantil e Educação Inclusiva.</p>
+    </footer>
+
+    <!-- Scripts de Interatividade -->
+    <script>
+        // Função para alternar abas
+        function switchTab(event, tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(c => c.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Alerta de sucesso ao atualizar perfil
+        function updateProfile(e) {
+            e.preventDefault();
+            alert('Perfil sensorial atualizado com sucesso!');
+            e.target.reset();
+        }
+
+        // Adicionar entrada no Diário com salvamento local
+        function addDiaryEntry(e) {
+            e.preventDefault();
+            const date = document.getElementById('diaryDate').value;
+            const category = document.getElementById('diaryCategory').value;
+            const text = document.getElementById('diaryText').value;
+
+            const list = document.getElementById('diaryList');
+            const newCard = document.createElement('div');
+            newCard.className = 'info-card';
+            newCard.style.marginBottom = '1rem';
+            newCard.innerHTML = `
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">${date ? date.split('-').reverse().join('/') : 'Hoje'} - ${category}</span>
+                <h4 style="color: var(--primary); margin: 4px 0;">Registro de Acompanhamento</h4>
+                <p>${text}</p>
+            `;
+            list.prepend(newCard);
+            alert('Registro adicionado ao diário com sucesso!');
+            e.target.reset();
+        }
+
+        // Adicionar atividade escolar
+        function addSchoolActivity(e) {
+            e.preventDefault();
+            alert('Atividade enviada e sincronizada com sucesso para a família!');
+            e.target.reset();
+        }
+
+        // Adicionar nota criativa no caderno estilo post-it
+        function addCreativeNote(e) {
+            e.preventDefault();
+            const text = document.getElementById('noteInput').value;
+            const grid = document.getElementById('notesGrid');
+            
+            const today = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const noteCard = document.createElement('div');
+            noteCard.className = 'note-card';
+            noteCard.innerHTML = `
+                <span class="note-date">${today}</span>
+                <div class="note-text">${text}</div>
+                <div class="note-author">- Família / ADI</div>
+            `;
+            
+            grid.prepend(noteCard);
+            alert('Nota fixada no caderno criativo!');
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
